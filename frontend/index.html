@@ -35,44 +35,133 @@
   </header>
 
   <!-- ============ 智能咨询 ============ -->
-  <main class="wrap" v-show="view==='consult'">
-    <section class="consult-hero">
-      <div class="eyebrow">智能咨询</div>
-      <h1>有关老人的健康问题，<em>问问颐康就好</em></h1>
-      <p>不论是慢性病管理、用药提醒、饮食起居，还是睡眠、情绪与跌倒预防，
-         都可以直接问。建议仅供参考，遇到紧急情况请尽快就医。</p>
-      <div class="chips">
-        <span class="chip" v-for="q in suggestions" :key="q" @click="askSuggestion(q)">{{ q }}</span>
+  <main class="wrap consult-layout" v-show="view==='consult'">
+    <!-- 左侧：数字人 -->
+    <aside class="dh-panel">
+      <div class="dh-card" :class="{ speaking: consulting }">
+        <div class="dh-stage">
+          <div class="dh-aura"></div>
+          <div class="dh-avatar">
+            <svg viewBox="0 0 240 264" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="颐康健康助手数字人">
+              <defs>
+                <radialGradient id="dhBg" cx="50%" cy="38%" r="70%">
+                  <stop offset="0%" stop-color="#e8f3ef"/><stop offset="100%" stop-color="#cfe6df"/>
+                </radialGradient>
+                <linearGradient id="dhSkin" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f7d6b6"/><stop offset="100%" stop-color="#eab98f"/>
+                </linearGradient>
+                <linearGradient id="dhHair" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#4a3a31"/><stop offset="100%" stop-color="#2c211c"/>
+                </linearGradient>
+                <linearGradient id="dhCoat" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#e6efeb"/>
+                </linearGradient>
+                <linearGradient id="dhScrub" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#36a093"/><stop offset="100%" stop-color="#1f6b61"/>
+                </linearGradient>
+              </defs>
+              <!-- 背景 -->
+              <circle cx="120" cy="120" r="120" fill="url(#dhBg)"/>
+              <!-- 肩 / 白大褂 -->
+              <path d="M44 264 C48 206 78 184 120 184 C162 184 192 206 196 264 Z" fill="url(#dhCoat)"/>
+              <path d="M120 184 L104 232 L120 250 L136 232 Z" fill="url(#dhScrub)"/>
+              <path d="M120 184 C108 196 100 210 104 232 L112 226 C110 210 116 196 120 190 Z" fill="#2a8175" opacity=".5"/>
+              <!-- 听诊器 -->
+              <path d="M108 188 C104 214 96 226 84 232" fill="none" stroke="#1f6b61" stroke-width="4" stroke-linecap="round"/>
+              <path d="M132 188 C140 210 150 220 162 226" fill="none" stroke="#1f6b61" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="166" cy="230" r="7" fill="#e8745b"/>
+              <!-- 脖子 -->
+              <path d="M104 168 L104 190 C104 198 136 198 136 190 L136 168 Z" fill="#eab98f"/>
+              <!-- 后发 -->
+              <path d="M64 120 C60 70 86 38 120 38 C154 38 180 70 176 120 C178 150 170 168 162 176 L156 150 C170 120 168 92 158 78 C150 120 90 120 82 78 C72 92 70 120 84 150 L78 176 C70 168 62 150 64 120 Z" fill="url(#dhHair)"/>
+              <!-- 脸 -->
+              <path d="M82 108 C82 74 98 56 120 56 C142 56 158 74 158 108 C158 142 142 162 120 162 C98 162 82 142 82 108 Z" fill="url(#dhSkin)"/>
+              <!-- 耳 + 耳环 -->
+              <ellipse cx="84" cy="116" rx="7" ry="10" fill="#eab98f"/>
+              <ellipse cx="156" cy="116" rx="7" ry="10" fill="#eab98f"/>
+              <circle cx="84" cy="130" r="2.5" fill="#e8745b"/><circle cx="156" cy="130" r="2.5" fill="#e8745b"/>
+              <!-- 腮红 -->
+              <ellipse cx="100" cy="126" rx="10" ry="6" fill="#e8745b" opacity=".18"/>
+              <ellipse cx="140" cy="126" rx="10" ry="6" fill="#e8745b" opacity=".18"/>
+              <!-- 眉 -->
+              <path d="M92 100 C98 95 110 95 115 99" fill="none" stroke="#5b4338" stroke-width="3" stroke-linecap="round"/>
+              <path d="M125 99 C130 95 142 95 148 100" fill="none" stroke="#5b4338" stroke-width="3" stroke-linecap="round"/>
+              <!-- 眼 -->
+              <g class="dh-eye">
+                <ellipse cx="103" cy="112" rx="8" ry="6.5" fill="#fff"/>
+                <circle cx="104" cy="112" r="4.2" fill="#46342b"/>
+                <circle cx="105.6" cy="110.4" r="1.4" fill="#fff"/>
+                <ellipse class="dh-lid" cx="103" cy="112" rx="9" ry="7" fill="url(#dhSkin)"/>
+              </g>
+              <g class="dh-eye">
+                <ellipse cx="137" cy="112" rx="8" ry="6.5" fill="#fff"/>
+                <circle cx="136" cy="112" r="4.2" fill="#46342b"/>
+                <circle cx="137.6" cy="110.4" r="1.4" fill="#fff"/>
+                <ellipse class="dh-lid" cx="137" cy="112" rx="9" ry="7" fill="url(#dhSkin)"/>
+              </g>
+              <!-- 鼻 -->
+              <path d="M120 118 L116 132 C118 135 122 135 124 132 Z" fill="#e0ad86" opacity=".7"/>
+              <!-- 嘴 -->
+              <path class="dh-mouth" d="M108 142 C114 150 126 150 132 142 C126 146 114 146 108 142 Z" fill="#c75b4a"/>
+              <!-- 前发刘海 -->
+              <path d="M82 100 C80 72 98 54 120 54 C142 54 160 72 158 100 C150 84 140 78 132 80 C128 70 112 70 108 80 C100 78 90 84 82 100 Z" fill="url(#dhHair)"/>
+              <!-- 耳麦（在线顾问） -->
+              <path d="M78 110 C78 74 100 52 120 52 C140 52 162 74 162 110" fill="none" stroke="#1f6b61" stroke-width="5" stroke-linecap="round"/>
+              <rect x="72" y="108" width="12" height="20" rx="5" fill="#1f6b61"/>
+              <path d="M78 128 C78 146 92 150 104 150" fill="none" stroke="#1f6b61" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="106" cy="150" r="4" fill="#e8745b"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dh-name">颐康 · 健康助手</div>
+        <div class="dh-role">您的专属老年健康顾问</div>
+        <div class="dh-status" :class="{ busy: consulting }">
+          <span class="dh-dot"></span>{{ consulting ? '正在思考并回答…' : '在线，随时为您解答' }}
+        </div>
+        <div class="dh-wave" :class="{ on: consulting }"><i></i><i></i><i></i><i></i><i></i></div>
       </div>
-    </section>
+    </aside>
 
-    <section class="card">
-      <div class="chat-shell">
-        <div class="chat-stream" ref="stream">
-          <div v-if="!consult.length" class="chat-empty">
-            <div class="big">💬</div>
-            <div>从上面挑一个问题，或直接在下方输入</div>
-          </div>
-          <div v-for="(m,i) in consult" :key="i" class="bubble-row" :class="m.role==='user'?'user':'bot'">
-            <div class="avatar" :class="m.role==='user'?'me':'bot'">{{ m.role==='user'?'👤':'脉' }}</div>
-            <div class="bubble" v-if="m.role==='user'">{{ m.content }}</div>
-            <div class="bubble" v-else v-html="md(m.content)"></div>
-          </div>
-          <div v-if="consulting" class="bubble-row bot">
-            <div class="avatar bot">脉</div>
-            <div class="bubble typing"><span></span><span></span><span></span></div>
-          </div>
-        </div>
-        <div class="composer">
-          <textarea v-model="consultInput" placeholder="请输入您想咨询的老年健康问题…"
-            @keydown.enter.exact.prevent="sendConsult" rows="1"></textarea>
-          <button class="mic" :class="{rec: recording}" @click="toggleVoice"
-            :title="voiceSupported ? '语音输入' : '当前浏览器不支持语音'">🎤</button>
-          <button class="btn" @click="sendConsult" :disabled="consulting || !consultInput.trim()">发送</button>
+    <!-- 右侧：咨询对话 -->
+    <section class="consult-main">
+      <div class="consult-intro">
+        <div class="eyebrow">智能咨询</div>
+        <h1>有关老人的健康问题，<em>问问颐康就好</em></h1>
+        <p>不论是慢性病管理、用药提醒、饮食起居，还是睡眠、情绪与跌倒预防，
+           都可以直接问。建议仅供参考，遇到紧急情况请尽快就医。</p>
+        <div class="chips">
+          <span class="chip" v-for="q in suggestions" :key="q" @click="askSuggestion(q)">{{ q }}</span>
         </div>
       </div>
+
+      <div class="card chat-card">
+        <div class="chat-shell">
+          <div class="chat-stream" ref="stream">
+            <div v-if="!consult.length" class="chat-empty">
+              <div class="big">💬</div>
+              <div>挑一个问题，或直接在下方输入，向健康助手提问</div>
+            </div>
+            <div v-for="(m,i) in consult" :key="i" class="bubble-row" :class="m.role==='user'?'user':'bot'">
+              <div class="avatar" :class="m.role==='user'?'me':'bot'">{{ m.role==='user'?'👤':'脉' }}</div>
+              <div class="bubble" v-if="m.role==='user'">{{ m.content }}</div>
+              <div class="bubble" v-else v-html="md(m.content)"></div>
+            </div>
+            <div v-if="consulting" class="bubble-row bot">
+              <div class="avatar bot">脉</div>
+              <div class="bubble typing"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="composer">
+            <textarea v-model="consultInput" placeholder="请输入您想咨询的老年健康问题…"
+              @keydown.enter.exact.prevent="sendConsult" rows="1"></textarea>
+            <button class="mic" :class="{rec: recording}" @click="toggleVoice"
+              :title="voiceSupported ? '语音输入' : '当前浏览器不支持语音'">🎤</button>
+            <button class="btn" @click="sendConsult" :disabled="consulting || !consultInput.trim()">发送</button>
+          </div>
+        </div>
+      </div>
+      <p class="disclaimer">颐康提供的内容为健康管理建议，不构成医疗诊断，具体请以医生面诊为准。</p>
     </section>
-    <p class="disclaimer">颐康提供的内容为健康管理建议，不构成医疗诊断，具体请以医生面诊为准。</p>
   </main>
 
   <!-- ============ 健康管理 ============ -->

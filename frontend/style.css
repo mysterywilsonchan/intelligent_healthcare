@@ -107,24 +107,71 @@ body {
 }
 .card h2 .ico { color: var(--jade); }
 
-/* ---------- 智能咨询 ---------- */
-.consult-hero {
+/* ---------- 智能咨询：两栏（数字人 + 对话） ---------- */
+.consult-layout { display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+
+/* 数字人面板 */
+.dh-panel { position: sticky; top: 96px; }
+.dh-card {
   background:
-    radial-gradient(120% 140% at 100% 0%, var(--jade-soft) 0%, transparent 55%),
+    radial-gradient(120% 90% at 50% 0%, var(--jade-soft) 0%, transparent 60%),
     var(--paper);
   border: 1px solid var(--line); border-radius: var(--r-lg);
-  padding: 30px 30px 26px; box-shadow: var(--shadow); margin-bottom: 20px;
+  padding: 22px 20px 20px; box-shadow: var(--shadow); text-align: center;
 }
-.consult-hero .eyebrow {
+.dh-stage { position: relative; width: 196px; height: 196px; margin: 4px auto 8px; }
+.dh-aura {
+  position: absolute; inset: 6px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(47,143,131,.22), transparent 68%);
+  animation: dh-aura 3.6s ease-in-out infinite;
+}
+.dh-card.speaking .dh-aura { animation-duration: 1.4s; background: radial-gradient(circle, rgba(232,116,91,.28), transparent 66%); }
+@keyframes dh-aura { 0%,100%{ transform: scale(.96); opacity:.7 } 50%{ transform: scale(1.04); opacity:1 } }
+.dh-avatar { position: relative; width: 100%; height: 100%; animation: dh-breathe 4.8s ease-in-out infinite; }
+.dh-avatar svg { width: 100%; height: 100%; border-radius: 50%; box-shadow: var(--shadow-soft); }
+@keyframes dh-breathe { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-5px) } }
+
+/* 眨眼 */
+.dh-lid { transform-box: fill-box; transform-origin: center; transform: scaleY(0); animation: dh-blink 5.4s infinite; }
+@keyframes dh-blink { 0%,93%,100%{ transform: scaleY(0) } 96%{ transform: scaleY(1) } }
+/* 说话时嘴部动 */
+.dh-mouth { transform-box: fill-box; transform-origin: center; }
+.dh-card.speaking .dh-mouth { animation: dh-talk .34s ease-in-out infinite alternate; }
+@keyframes dh-talk { from{ transform: scaleY(.5) } to{ transform: scaleY(1.5) } }
+
+.dh-name { font-family: var(--cjk); font-weight: 700; font-size: 18px; margin-top: 4px; }
+.dh-role { font-family: var(--cjk); font-size: 13px; color: var(--muted); margin-top: 2px; }
+.dh-status {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 12px;
   font-family: var(--cjk); font-size: 13px; color: var(--jade-deep);
-  font-weight: 600; letter-spacing: 2px; text-transform: none;
+  background: var(--mist); padding: 6px 14px; border-radius: 999px;
 }
-.consult-hero h1 {
-  font-family: var(--cjk); font-size: 30px; line-height: 1.3; margin: 8px 0 10px;
+.dh-status.busy { color: var(--pulse); }
+.dh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--jade); box-shadow: 0 0 0 0 var(--jade-soft); animation: dh-ping 1.8s infinite; }
+.dh-status.busy .dh-dot { background: var(--pulse); animation-duration: .9s; }
+@keyframes dh-ping { 0%{ box-shadow:0 0 0 0 rgba(47,143,131,.5) } 70%{ box-shadow:0 0 0 8px transparent } 100%{ box-shadow:0 0 0 0 transparent } }
+
+/* 说话声波 */
+.dh-wave { display: flex; justify-content: center; align-items: flex-end; gap: 4px; height: 22px; margin-top: 12px; opacity: 0; transition: opacity .2s; }
+.dh-wave.on { opacity: 1; }
+.dh-wave i { width: 4px; height: 6px; border-radius: 2px; background: var(--jade); }
+.dh-wave.on i { animation: dh-bars .8s ease-in-out infinite; }
+.dh-wave i:nth-child(2){ animation-delay:.12s } .dh-wave i:nth-child(3){ animation-delay:.24s }
+.dh-wave i:nth-child(4){ animation-delay:.36s } .dh-wave i:nth-child(5){ animation-delay:.48s }
+@keyframes dh-bars { 0%,100%{ height:6px } 50%{ height:20px } }
+
+/* 右侧介绍区（轻量标题，非大卡片） */
+.consult-intro { margin-bottom: 16px; }
+.consult-intro .eyebrow {
+  font-family: var(--cjk); font-size: 13px; color: var(--jade-deep);
+  font-weight: 600; letter-spacing: 2px;
+}
+.consult-intro h1 {
+  font-family: var(--cjk); font-size: 27px; line-height: 1.3; margin: 6px 0 8px;
   font-weight: 700; letter-spacing: .5px;
 }
-.consult-hero h1 em { font-style: normal; color: var(--jade-deep); }
-.consult-hero p { font-family: var(--cjk); color: var(--muted); max-width: 640px; }
+.consult-intro h1 em { font-style: normal; color: var(--jade-deep); }
+.consult-intro p { font-family: var(--cjk); color: var(--muted); }
 .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 .chip {
   font-family: var(--cjk); font-size: 14.5px; cursor: pointer;
@@ -257,8 +304,13 @@ td.num, th.num { font-family: var(--data); }
 /* ---------- 响应式 ---------- */
 @media (max-width: 860px) {
   .manage { grid-template-columns: 1fr; }
+  .consult-layout { grid-template-columns: 1fr; }
+  .dh-panel { position: static; }
+  .dh-card { display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; align-items: center; text-align: left; }
+  .dh-stage { width: 120px; height: 120px; margin: 0; grid-row: span 4; }
+  .dh-wave { justify-content: flex-start; }
   .header-inner { flex-wrap: wrap; gap: 12px; }
-  .consult-hero h1 { font-size: 24px; }
+  .consult-intro h1 { font-size: 23px; }
   .bubble { max-width: 86%; }
 }
 
